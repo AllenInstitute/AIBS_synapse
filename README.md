@@ -1,1 +1,2 @@
 # AIBS_synapse
+This repoository includes NEST implementatons of our synpase models. The former NEST model waw constructed for NEST-2.14.0, but it does not work for NEST-2.16.0 due to the changes introduced to the kernel. Specficially, the NEST kernel no longer carries the information about the time of the last spike. This repository now just includes NEST-2.16.0 version. The earlier version also will be made available here since it is now being used in one of our modelling efforts. 
