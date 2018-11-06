@@ -1,23 +1,9 @@
 /*
- *  drop_odd_spike_connection.h
- *
- *  This file is part of NEST.
- *
- *  Copyright (C) 2004 The NEST Initiative
- *
- *  NEST is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  NEST is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
- *
+This file was derived from the Tsodyks_synapse included in NEST 2.14.0 to implement a generalized short-term plasticity (STP) model.
+The synaptic dynamics were calculated using the RK routine, which is implemented directly. 
+This model can be considered as an extension of Tsodyks-Markram model; see [1]. 
+Since the kernel of NEST-2.16.0 does not transmit the time of last spike anymore,the function  to expect the last spike time is modified to  work with NEST-2.16.0.
+  
  */
 
 #ifndef AIBS_CONNECTION_H
@@ -28,18 +14,18 @@
 #include <iostream>
 
 /* BeginDocumentation
-  Name: drop_odd_spike - Synapse dropping spikes with odd time stamps.
-
+  Name: aibs_synaps  
+ 
   Description:
-  This synapse will not deliver any spikes with odd time stamps, while spikes
-  with even time stamps go through unchanged.
+  This synapse implement 5 gating processes for STP; 
+  depression, facilitation, use-dependent replenishment, desensitization and slow-       modulaiton of release prob. See [1]. 
 
   Transmits: SpikeEvent
 
   Remarks:
-  This synapse type is provided only for illustration purposes in MyModule.
+  Each gating process can be individually turned off by setting corresponding parameters to 0; see examples in the repository.
 
-  SeeAlso: synapsedict
+  Ref: [1] Hennig 2013, Front. Comput. Neurosci. 7.
 */
 
 namespace allennest
@@ -119,18 +105,18 @@ private:
   double weight_;
   double tau_f_; //!< [ms] time constant for fascilitation
   double tau_r_; //!< [ms] time constant for recovery
-  double tau_fdr_; //!< [ms] time constant for baseline of tau_rec
-  double tau_r0_; //!< [ms] asymptotic value of baseline of tau_rec
-  double p0_;       //!< asymptotic value of probability of release
+  double tau_fdr_; //!< [ms] time constant for use-dependent replen.
+  double tau_r0_; //!< [ms] asymptotic value of baseline of tau_r
+  double p0_;       //!< baseline value of probability of release 
   double n_;       //!< amount of resources in recovered state
   double p_;       //!< actual probability of release
-  double a_fdr_;       //!< fraction of changes in tau_rec
-  double S_;       //the fraction of non-desensitized receptors
-  double tau_d_;   //the 
-  double a_D_;
-  double a_i_;
-  double p0bar_;
-  double tau_i_;
+  double a_fdr_;       //!< fraction of changes in tau_r
+  double S_;       //!< the fraction of non-desensitized receptors
+  double tau_d_;   //!< [ms] time contant of desensitization
+  double a_D_;     //!< the amount of Desensitization induced by a single spike
+  double a_i_;     //!< the amount of slow-modulation induced by a single spike
+  double p0bar_;   //!< asymptotic value of probability of release during slow-modulation of release prob.
+  double tau_i_;   //!< [ms] time contant of slow-modulation
   double flag_f;
   double flag_Tau_r;
   double flag_S;
@@ -285,7 +271,7 @@ AibsConnection< targetidentifierT >::send( nest::Event& e,
     double ktr1, ktr2, ktr3, ktr4;
     double kS1,  kS2,  kS3,  kS4;
     double kp01, kp02, kp03, kp04;
-    //std::cout<<e.get_stamp().get_ms()<<" "<<t_lastspike<<".\n";
+    
 
    if (tau_r_<1e-10)
     {
@@ -340,8 +326,7 @@ AibsConnection< targetidentifierT >::send( nest::Event& e,
         p0_=p0bar_;
         p_=p0bar_; //p_ is fixed at the asymptotic value p0bar_
     }
-    //std::cout<<"f: "<<flag_f<<" Tau_r:"<<flag_Tau_r<<" S:"<<flag_S<<" p0:"<<flag_p0<<"\n";
-    //std::cout<<"n: "<<n_<<" p:"<<p_<<" Tau_r:"<<tau_r_<<" S:"<<S_<<" p0:"<<p0_<<"\n";
+    
     if (t_lastspike_>0.0001) //this ensures that the current spike is not the first spike. 
     {       
             //std::cout<<"update"<<"\n";
@@ -362,7 +347,7 @@ AibsConnection< targetidentifierT >::send( nest::Event& e,
 		ktr1  = h*dtrdt(t0, Tau_r, tau_fdr_, tau_r0_)*flag_Tau_r;
 		kS1   = h*dSdt(t0, S, tau_d_)*flag_S;
 		kp01  = h*dp0dt(t0, p0, p0bar_,tau_i_)*flag_p0;
-                //std::cout<<"kn1: "<<kn1<<" kp1:"<<kp1<<" Tau_r:"<<ktr1<<" kS1:"<<kS1<<" kp01:"<<kp01<<"\n";
+               
 	  
 	 
 		//k2
@@ -413,7 +398,7 @@ AibsConnection< targetidentifierT >::send( nest::Event& e,
   p0_=p0_-a_i_*p0_*flag_p0;
 
   // We use the current values for the spike number n.
-  std::cout<<n_<<" "<<p_<<" "<<S_<<"\n";
+  //std::cout<<n_<<" "<<p_<<" "<<S_<<"\n"; 
   e.set_receiver( *target  );
   e.set_weight( p_ * n_ *S_*weight_ );
   // send the spike to the target
