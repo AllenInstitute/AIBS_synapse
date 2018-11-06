@@ -26,7 +26,7 @@ Any 11 synapse types in the CNS_param.py can be chosen for now. The parameters h
 ## Reference
 Hennig, M.H. (2013). Theoretical models of synaptic short term plasticity. Front. Comput. Neurosci. 7, 1–10.
 
-Seeman, S.C., Campagnola, L., Davoudian, P.A., Hoggarth, A., Hage, T.A., Bosma-Moody, A., Baker, C.A., Lee, J.H., Mihalas, S., Teeter, C., et al. (2018b). Sparse recurrent excitatory connectivity in the microcircuit of the adult mouse and human cortex. Elife 7, 1–27.
+Seeman, S.C., Campagnola, L., Davoudian, P.A., Hoggarth, A., Hage, T.A., Bosma-Moody, A., Baker, C.A., Lee, J.H., Mihalas, S., Teeter, C., et al. (2018). Sparse recurrent excitatory connectivity in the microcircuit of the adult mouse and human cortex. Elife 7, 1–27.
 
 Tsodyks, M., Uziel, A., and Markram, H. (2000). Synchrony Generation in Recurrent Networks with Frequency-Dependent Synapses. 20, 1–5.
 
