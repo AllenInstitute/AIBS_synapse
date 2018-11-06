@@ -15,7 +15,7 @@ We have summarized the instructions provided by NEST developers. For more detail
 For SLI, (allenmodule) Install.
 For pynest, nest.Install("allenmodule"). 
 ## The summary of generalized STP model
-This STP model implemented 5 gating processes (or dynamics), depression, facilitation, use-dependent replenishment, desensitization and slow-modulation of release probability. By setting the corresponding parameters to 0, each gating process can be turned on or off. The mathematical descriptions of the gating processes are provided in our CNS 2018 poster (available in the ‘examples’ folder). 
+This STP model implemented 5 gating processes (or dynamics), depression, facilitation, use-dependent replenishment, desensitization and slow-modulation of release probability. By setting the corresponding parameters to 0, each gating process can be turned on. The mathematical descriptions of the gating processes are provided in our CNS 2018 poster (available in the ‘examples’ folder). 
 ## Examples
 The example folder has a script to replicate STPs which were presented at the CNS 2018 meeting. 
 Usage: python syn_test.py pvalb_pvalb_1. 
